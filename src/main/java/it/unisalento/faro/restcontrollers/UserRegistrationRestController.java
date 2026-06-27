@@ -1,7 +1,8 @@
 package it.unisalento.faro.restcontrollers;
 
+import it.unisalento.faro.dto.login_and_registration.WorkerRegistrationDTO;
 import it.unisalento.faro.dto.main.WorkerDTO;
-import it.unisalento.faro.dto.main.WorkersListDTO;
+import it.unisalento.faro.dto.list.WorkersListDTO;
 import it.unisalento.faro.dto.responseDTO.RegistrationResponseDTO;
 import it.unisalento.faro.exceptions.EmailAlreadyExistsException;
 import it.unisalento.faro.service.WorkerService;
@@ -25,11 +26,11 @@ public class UserRegistrationRestController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody WorkerDTO workerDto) {
+    public ResponseEntity<?> save(@RequestBody WorkerRegistrationDTO registrationDTO) {
         RegistrationResponseDTO resultDTO = new RegistrationResponseDTO();
 
         try {
-            WorkerDTO registered = workerService.register(workerDto);
+            WorkerDTO registered = workerService.register(registrationDTO);
 
             List<WorkerDTO> list = new ArrayList<>();
             list.add(registered);

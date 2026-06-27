@@ -2,7 +2,7 @@ package it.unisalento.faro.service;
 
 import it.unisalento.faro.domain.Admin;
 import it.unisalento.faro.domain.User;
-import it.unisalento.faro.dto.main.LoginDTO;
+import it.unisalento.faro.dto.login_and_registration.LoginDTO;
 import it.unisalento.faro.dto.main.UserDTO;
 import it.unisalento.faro.exceptions.EmailChangeNotAllowedException;
 import it.unisalento.faro.exceptions.UserNotFoundException;
@@ -132,7 +132,6 @@ public class UserService {
         dto.setNome(user.getNome());
         dto.setCognome(user.getCognome());
         dto.setEmail(user.getEmail());
-        dto.setPassword(user.getPassword());
         return dto;
     }
 }

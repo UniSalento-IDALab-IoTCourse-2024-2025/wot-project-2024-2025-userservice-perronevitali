@@ -1,7 +1,7 @@
 package it.unisalento.faro.restcontrollers;
 
 import it.unisalento.faro.dto.main.WorkerDTO;
-import it.unisalento.faro.dto.main.WorkersListDTO;
+import it.unisalento.faro.dto.list.WorkersListDTO;
 import it.unisalento.faro.dto.responseDTO.WorkerResponseDTO;
 import it.unisalento.faro.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;

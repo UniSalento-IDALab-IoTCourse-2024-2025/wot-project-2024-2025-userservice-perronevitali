@@ -1,7 +1,7 @@
 package it.unisalento.faro.restcontrollers;
 
 import it.unisalento.faro.dto.main.UserDTO;
-import it.unisalento.faro.dto.main.UsersListDTO;
+import it.unisalento.faro.dto.list.UsersListDTO;
 import it.unisalento.faro.dto.responseDTO.UserResponseDTO;
 import it.unisalento.faro.exceptions.EmailChangeNotAllowedException;
 import it.unisalento.faro.exceptions.UserNotFoundException;

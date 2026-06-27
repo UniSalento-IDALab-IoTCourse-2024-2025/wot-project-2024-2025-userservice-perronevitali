@@ -1,7 +1,8 @@
 package it.unisalento.faro.restcontrollers;
 
+import it.unisalento.faro.dto.login_and_registration.AdminRegistrationDTO;
 import it.unisalento.faro.dto.main.AdminDTO;
-import it.unisalento.faro.dto.main.AdminsListDTO;
+import it.unisalento.faro.dto.list.AdminsListDTO;
 import it.unisalento.faro.dto.responseDTO.AdminResponseDTO;
 import it.unisalento.faro.exceptions.EmailAlreadyExistsException;
 import it.unisalento.faro.service.AdminService;
@@ -92,11 +93,11 @@ public class AdminRestController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@RequestBody AdminDTO adminDto) {
+    public ResponseEntity<?> create(@RequestBody AdminRegistrationDTO registrationDTO) {
         AdminResponseDTO responseDTO = new AdminResponseDTO();
 
         try {
-            AdminDTO created = adminService.createAdmin(adminDto);
+            AdminDTO created = adminService.createAdmin(registrationDTO);
 
             List<AdminDTO> list = new ArrayList<>();
             list.add(created);

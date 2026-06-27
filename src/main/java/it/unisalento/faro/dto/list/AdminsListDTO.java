@@ -1,4 +1,6 @@
-package it.unisalento.faro.dto.main;
+package it.unisalento.faro.dto.list;
+
+import it.unisalento.faro.dto.main.AdminDTO;
 
 import java.util.List;
 

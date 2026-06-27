@@ -1,4 +1,4 @@
-package it.unisalento.faro.dto.main;
+package it.unisalento.faro.dto.login_and_registration;
 
 public class LoginDTO {
 

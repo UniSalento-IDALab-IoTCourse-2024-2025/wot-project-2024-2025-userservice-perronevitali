@@ -1,7 +1,7 @@
 package it.unisalento.faro.dto.responseDTO;
 
-import it.unisalento.faro.dto.main.AreasListDTO;
-import it.unisalento.faro.dto.main.WorkersListDTO;
+import it.unisalento.faro.dto.list.AreasListDTO;
+import it.unisalento.faro.dto.list.WorkersListDTO;
 
 public class AreaResponseDTO extends BaseResponseDTO {
     public static final int AREA_NOT_FOUND = 1;

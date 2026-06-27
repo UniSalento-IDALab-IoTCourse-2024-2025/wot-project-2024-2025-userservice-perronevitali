@@ -4,6 +4,7 @@ import io.jsonwebtoken.io.IOException;
 import it.unisalento.faro.configuration.RabbitMQManager;
 import it.unisalento.faro.domain.User;
 import it.unisalento.faro.domain.Worker;
+import it.unisalento.faro.dto.login_and_registration.WorkerRegistrationDTO;
 import it.unisalento.faro.dto.main.WorkerDTO;
 import it.unisalento.faro.exceptions.EmailAlreadyExistsException;
 import it.unisalento.faro.repositories.UserRepository;
@@ -64,17 +65,17 @@ public class WorkerService {
         return toWorkerDTO(user);
     }
 
-    public WorkerDTO register(WorkerDTO workerDto) throws EmailAlreadyExistsException {
-        Optional<User> existingUser = userRepository.findByEmail(workerDto.getEmail());
+    public WorkerDTO register(WorkerRegistrationDTO registrationDTO) throws EmailAlreadyExistsException {
+        Optional<User> existingUser = userRepository.findByEmail(registrationDTO.getEmail());
         if (existingUser.isPresent()) {
             throw new EmailAlreadyExistsException();
         }
 
         Worker worker = new Worker();
-        worker.setNome(workerDto.getNome());
-        worker.setCognome(workerDto.getCognome());
-        worker.setEmail(workerDto.getEmail());
-        worker.setPassword(passwordEncoder.encode(workerDto.getPassword()));
+        worker.setNome(registrationDTO.getNome());
+        worker.setCognome(registrationDTO.getCognome());
+        worker.setEmail(registrationDTO.getEmail());
+        worker.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
         worker.setAuthorizedAreaIds(new ArrayList<>());
 
         userRepository.persist(worker);

@@ -1,6 +1,6 @@
 package it.unisalento.faro.dto.responseDTO;
 
-import it.unisalento.faro.dto.main.WorkersListDTO;
+import it.unisalento.faro.dto.list.WorkersListDTO;
 
 public class WorkerResponseDTO extends BaseResponseDTO {
     public static final int WORKER_NOT_FOUND = 1;

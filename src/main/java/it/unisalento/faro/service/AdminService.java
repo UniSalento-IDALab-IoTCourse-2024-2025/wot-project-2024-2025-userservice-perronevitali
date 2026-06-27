@@ -4,6 +4,7 @@ import io.jsonwebtoken.io.IOException;
 import it.unisalento.faro.configuration.RabbitMQManager;
 import it.unisalento.faro.domain.Admin;
 import it.unisalento.faro.domain.User;
+import it.unisalento.faro.dto.login_and_registration.AdminRegistrationDTO;
 import it.unisalento.faro.dto.main.AdminDTO;
 import it.unisalento.faro.exceptions.EmailAlreadyExistsException;
 import it.unisalento.faro.repositories.UserRepository;
@@ -54,18 +55,18 @@ public class AdminService {
         return toAdminDTO(user);
     }
 
-    public AdminDTO createAdmin(AdminDTO adminDto) throws EmailAlreadyExistsException {
-        Optional<User> existingUser = userRepository.findByEmail(adminDto.getEmail());
+    public AdminDTO createAdmin(AdminRegistrationDTO registrationDTO) throws EmailAlreadyExistsException {
+        Optional<User> existingUser = userRepository.findByEmail(registrationDTO.getEmail());
         if (existingUser.isPresent()) {
             throw new EmailAlreadyExistsException();
         }
 
         Admin admin = new Admin();
-        admin.setNome(adminDto.getNome());
-        admin.setCognome(adminDto.getCognome());
-        admin.setEmail(adminDto.getEmail());
-        admin.setPassword(passwordEncoder.encode(adminDto.getPassword()));
-        admin.setManagedAreaId(adminDto.getManagedAreaId());
+        admin.setNome(registrationDTO.getNome());
+        admin.setCognome(registrationDTO.getCognome());
+        admin.setEmail(registrationDTO.getEmail());
+        admin.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+        admin.setManagedAreaId(registrationDTO.getManagedAreaId());
 
         userRepository.persist(admin);
 
