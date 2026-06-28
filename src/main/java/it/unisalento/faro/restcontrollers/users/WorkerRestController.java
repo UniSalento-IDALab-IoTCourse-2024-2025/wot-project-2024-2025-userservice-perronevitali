@@ -1,14 +1,16 @@
-package it.unisalento.faro.restcontrollers;
+package it.unisalento.faro.restcontrollers.users;
 
 import it.unisalento.faro.dto.main.WorkerDTO;
 import it.unisalento.faro.dto.list.WorkersListDTO;
 import it.unisalento.faro.dto.responseDTO.WorkerResponseDTO;
-import it.unisalento.faro.service.WorkerService;
+import it.unisalento.faro.service.users.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,11 +62,12 @@ public class WorkerRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @RequestMapping(value = "/email/{email}",
+    @RequestMapping(value = "/email",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findByEmail(@PathVariable String email) {
+    public ResponseEntity<?> findByEmail(@RequestParam("email") String rawEmail) {
         WorkerResponseDTO responseDTO = new WorkerResponseDTO();
+        String email = URLDecoder.decode(rawEmail, StandardCharsets.UTF_8);
 
         try {
             WorkerDTO dto = workerService.getWorkerByEmail(email);

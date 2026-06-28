@@ -1,11 +1,11 @@
-package it.unisalento.faro.restcontrollers;
+package it.unisalento.faro.restcontrollers.users;
 
 import it.unisalento.faro.dto.main.UserDTO;
 import it.unisalento.faro.dto.list.UsersListDTO;
 import it.unisalento.faro.dto.responseDTO.UserResponseDTO;
 import it.unisalento.faro.exceptions.EmailChangeNotAllowedException;
 import it.unisalento.faro.exceptions.UserNotFoundException;
-import it.unisalento.faro.service.UserService;
+import it.unisalento.faro.service.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,14 +64,15 @@ public class UserRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @RequestMapping(value = "/email/{email}",
+    @RequestMapping(value = "/email",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findByEmail(@PathVariable String email) {
+    public ResponseEntity<?> findByEmail(@RequestParam("email") String rawEmail) {
         UserResponseDTO responseDTO = new UserResponseDTO();
+        String decodedEmail = URLDecoder.decode(rawEmail, StandardCharsets.UTF_8);
 
         try {
-            UserDTO userDto = userService.getUserByEmail(email);
+            UserDTO userDto = userService.getUserByEmail(decodedEmail);
 
             List<UserDTO> list = new ArrayList<>();
             list.add(userDto);
@@ -176,13 +177,14 @@ public class UserRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @RequestMapping(value = "/email/{email}",
+    @RequestMapping(value = "/email",
             method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteByEmail(@PathVariable String email) {
+    public ResponseEntity<?> deleteByEmail(@RequestParam("email") String rawEmail) {
         UserResponseDTO responseDTO = new UserResponseDTO();
+        String decodedEmail = URLDecoder.decode(rawEmail, StandardCharsets.UTF_8);
 
         try {
-            UserDTO deleted = userService.deleteUserByEmail(email);
+            UserDTO deleted = userService.deleteUserByEmail(decodedEmail);
 
             List<UserDTO> list = new ArrayList<>();
             list.add(deleted);

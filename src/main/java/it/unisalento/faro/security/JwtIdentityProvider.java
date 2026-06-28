@@ -32,8 +32,7 @@ public class JwtIdentityProvider implements IdentityProvider<TokenAuthentication
     }
 
     @Override
-    public Uni<SecurityIdentity> authenticate(TokenAuthenticationRequest request,
-                                              AuthenticationRequestContext context) {
+    public Uni<SecurityIdentity> authenticate(TokenAuthenticationRequest request, AuthenticationRequestContext context) {
         String token = request.getToken().getToken();
         String username = jwtUtilities.extractUsername(token);
 

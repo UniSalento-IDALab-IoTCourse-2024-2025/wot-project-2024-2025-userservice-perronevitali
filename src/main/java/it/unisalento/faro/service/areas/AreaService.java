@@ -1,4 +1,4 @@
-package it.unisalento.faro.service;
+package it.unisalento.faro.service.areas;
 
 import it.unisalento.faro.domain.Area;
 import it.unisalento.faro.dto.main.AreaDTO;

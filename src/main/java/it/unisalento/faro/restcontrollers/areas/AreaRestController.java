@@ -1,4 +1,4 @@
-package it.unisalento.faro.restcontrollers;
+package it.unisalento.faro.restcontrollers.areas;
 
 import it.unisalento.faro.dto.main.AreaDTO;
 import it.unisalento.faro.dto.list.AreasListDTO;
@@ -6,8 +6,8 @@ import it.unisalento.faro.dto.main.WorkerDTO;
 import it.unisalento.faro.dto.list.WorkersListDTO;
 import it.unisalento.faro.dto.responseDTO.AreaResponseDTO;
 import it.unisalento.faro.exceptions.AreaNotFoundException;
-import it.unisalento.faro.service.AreaService;
-import it.unisalento.faro.service.WorkerService;
+import it.unisalento.faro.service.areas.AreaService;
+import it.unisalento.faro.service.users.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

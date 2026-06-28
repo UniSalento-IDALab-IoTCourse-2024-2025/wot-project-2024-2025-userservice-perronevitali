@@ -1,8 +1,8 @@
-package it.unisalento.faro.restcontrollers;
+package it.unisalento.faro.restcontrollers.users;
 
 import it.unisalento.faro.dto.login_and_registration.LoginDTO;
 import it.unisalento.faro.dto.responseDTO.AuthenticationResponseDTO;
-import it.unisalento.faro.service.UserService;
+import it.unisalento.faro.service.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

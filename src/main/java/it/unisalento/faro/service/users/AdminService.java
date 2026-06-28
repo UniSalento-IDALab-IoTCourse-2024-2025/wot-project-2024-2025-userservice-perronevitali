@@ -1,7 +1,7 @@
-package it.unisalento.faro.service;
+package it.unisalento.faro.service.users;
 
 import io.jsonwebtoken.io.IOException;
-import it.unisalento.faro.configuration.RabbitMQManager;
+import it.unisalento.faro.configuration.rabbitmq.RabbitMQManager;
 import it.unisalento.faro.domain.Admin;
 import it.unisalento.faro.domain.User;
 import it.unisalento.faro.dto.login_and_registration.AdminRegistrationDTO;

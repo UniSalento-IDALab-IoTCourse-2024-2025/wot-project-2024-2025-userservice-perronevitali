@@ -1,11 +1,11 @@
-package it.unisalento.faro.restcontrollers;
+package it.unisalento.faro.restcontrollers.users;
 
 import it.unisalento.faro.dto.login_and_registration.WorkerRegistrationDTO;
 import it.unisalento.faro.dto.main.WorkerDTO;
 import it.unisalento.faro.dto.list.WorkersListDTO;
 import it.unisalento.faro.dto.responseDTO.RegistrationResponseDTO;
 import it.unisalento.faro.exceptions.EmailAlreadyExistsException;
-import it.unisalento.faro.service.WorkerService;
+import it.unisalento.faro.service.users.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
