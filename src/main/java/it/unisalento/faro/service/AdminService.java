@@ -1,4 +1,4 @@
-package it.unisalento.faro.service.users;
+package it.unisalento.faro.service;
 
 import io.jsonwebtoken.io.IOException;
 import it.unisalento.faro.configuration.rabbitmq.RabbitMQManager;

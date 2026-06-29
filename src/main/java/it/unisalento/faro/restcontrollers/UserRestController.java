@@ -1,11 +1,11 @@
-package it.unisalento.faro.restcontrollers.users;
+package it.unisalento.faro.restcontrollers;
 
 import it.unisalento.faro.dto.main.UserDTO;
 import it.unisalento.faro.dto.main.list.UsersListDTO;
 import it.unisalento.faro.dto.responseDTO.UserResponseDTO;
 import it.unisalento.faro.exceptions.EmailChangeNotAllowedException;
 import it.unisalento.faro.exceptions.UserNotFoundException;
-import it.unisalento.faro.service.users.UserService;
+import it.unisalento.faro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

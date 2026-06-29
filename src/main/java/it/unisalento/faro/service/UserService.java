@@ -1,4 +1,4 @@
-package it.unisalento.faro.service.users;
+package it.unisalento.faro.service;
 
 import it.unisalento.faro.domain.Admin;
 import it.unisalento.faro.domain.User;

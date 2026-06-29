@@ -1,5 +1,6 @@
 package it.unisalento.faro.dto.messagesDTO;
 
+// SHARED
 public class TaskAssignedMessage {
     private String taskId;
     private String description;

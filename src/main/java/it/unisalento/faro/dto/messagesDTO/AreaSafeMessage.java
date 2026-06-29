@@ -1,5 +1,6 @@
 package it.unisalento.faro.dto.messagesDTO;
 
+// SHARED
 public class AreaSafeMessage {
     private String areaId;
     private String areaName;

@@ -1,5 +1,6 @@
 package it.unisalento.faro.dto.otherDTO;
 
+// SHARED
 public class AreaStatusUpdateDTO {
 
     private String areaId;

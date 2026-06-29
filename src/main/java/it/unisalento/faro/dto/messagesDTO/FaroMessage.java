@@ -2,6 +2,7 @@ package it.unisalento.faro.dto.messagesDTO;
 
 import java.time.Instant;
 
+// SHARED
 public class FaroMessage {
     private String type;
     private Object payload;

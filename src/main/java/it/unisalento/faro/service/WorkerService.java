@@ -1,6 +1,5 @@
-package it.unisalento.faro.service.users;
+package it.unisalento.faro.service;
 
-import io.jsonwebtoken.io.IOException;
 import it.unisalento.faro.configuration.rabbitmq.RabbitMQConstants;
 import it.unisalento.faro.configuration.rabbitmq.RabbitMQManager;
 import it.unisalento.faro.configuration.rabbitmq.RabbitMQMessageTypes;
@@ -10,13 +9,16 @@ import it.unisalento.faro.dto.messagesDTO.AreaUnauthorizedMessage;
 import it.unisalento.faro.dto.messagesDTO.FaroMessage;
 import it.unisalento.faro.dto.login_and_registration.WorkerRegistrationDTO;
 import it.unisalento.faro.dto.main.WorkerDTO;
+import it.unisalento.faro.dto.otherDTO.PositionUpdateDTO;
 import it.unisalento.faro.exceptions.EmailAlreadyExistsException;
 import it.unisalento.faro.repositories.UserRepository;
+import org.bson.Document;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,18 +39,19 @@ public class WorkerService {
         List<User> workers = userRepository.list("_t", "worker");
         List<WorkerDTO> result = new ArrayList<>();
         for (User user : workers) {
-            WorkerDTO dto = toWorkerDTO(user);
-            result.add(dto);
+            result.add(toWorkerDTO(user));
         }
         return result;
     }
 
     public List<WorkerDTO> getAllWorkersByArea(String areaId) {
-        List<User> workers = userRepository.list("_t = 'worker' and currentAreaId = ?1", areaId);
+        // uso Document BSON per evitare ambiguità con PanacheQL su MongoDB
+        List<User> workers = userRepository.list(
+                new Document("_t", "worker").append("currentAreaId", areaId)
+        );
         List<WorkerDTO> result = new ArrayList<>();
         for (User user : workers) {
-            WorkerDTO dto = toWorkerDTO(user);
-            result.add(dto);
+            result.add(toWorkerDTO(user));
         }
         return result;
     }
@@ -86,7 +89,7 @@ public class WorkerService {
 
         try {
             rabbitMQManager.declareUserQueue(worker.getId());
-        } catch (IOException | java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -120,31 +123,50 @@ public class WorkerService {
         return toWorkerDTO(worker);
     }
 
-    public WorkerDTO updateCurrentArea(String id, String areaId) throws Exception {
-        User user = userRepository.findById(id);
+    public WorkerDTO updateCurrentArea(String userId, String areaId,
+                                       String previousAreaId) throws Exception {
+        User user = userRepository.findById(userId);
         if (user == null || !(user instanceof Worker)) {
             throw new Exception("Worker non trovato");
         }
 
         Worker worker = (Worker) user;
         worker.setCurrentAreaId(areaId);
+        userRepository.update(worker);
 
-        if (worker.getAuthorizedAreaIds() == null || !worker.getAuthorizedAreaIds().contains(areaId)) {
-
-            FaroMessage message = new FaroMessage(RabbitMQMessageTypes.AREA_UNAUTHORIZED, new AreaUnauthorizedMessage(areaId));
+        // verifica autorizzazione — notifica worker se area non autorizzata
+        if (worker.getAuthorizedAreaIds() == null
+                || !worker.getAuthorizedAreaIds().contains(areaId)) {
             try {
                 rabbitMQManager.publish(
                         RabbitMQConstants.EXCHANGE_INBOX,
                         worker.getId(),
                         RabbitMQMessageTypes.AREA_UNAUTHORIZED,
-                        message
+                        new FaroMessage(
+                                RabbitMQMessageTypes.AREA_UNAUTHORIZED,
+                                new AreaUnauthorizedMessage(areaId)
+                        )
                 );
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        userRepository.update(worker);
+        // notifica OperationalService dell'aggiornamento posizione
+        try {
+            PositionUpdateDTO positionUpdate = new PositionUpdateDTO(
+                    userId, areaId, previousAreaId
+            );
+            rabbitMQManager.publish(
+                    RabbitMQConstants.EXCHANGE_AREA_UPDATES,
+                    RabbitMQConstants.ROUTING_KEY_POSITION,
+                    RabbitMQMessageTypes.POSITION_UPDATE,
+                    positionUpdate
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return toWorkerDTO(worker);
     }
 

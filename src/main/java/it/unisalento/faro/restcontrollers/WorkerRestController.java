@@ -1,9 +1,9 @@
-package it.unisalento.faro.restcontrollers.users;
+package it.unisalento.faro.restcontrollers;
 
 import it.unisalento.faro.dto.main.WorkerDTO;
 import it.unisalento.faro.dto.main.list.WorkersListDTO;
 import it.unisalento.faro.dto.responseDTO.WorkerResponseDTO;
-import it.unisalento.faro.service.users.WorkerService;
+import it.unisalento.faro.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

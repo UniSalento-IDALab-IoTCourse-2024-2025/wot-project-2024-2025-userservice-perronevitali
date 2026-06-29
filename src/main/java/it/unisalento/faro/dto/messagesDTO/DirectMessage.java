@@ -1,7 +1,9 @@
 package it.unisalento.faro.dto.messagesDTO;
 
+// SHARED
 public class DirectMessage {
     private String senderId;
+    private String recipientId;
     private String text;
 
     public DirectMessage() {}
@@ -10,9 +12,27 @@ public class DirectMessage {
         this.text = text;
     }
 
-    public String getSenderId() { return senderId; }
-    public void setSenderId(String senderId) { this.senderId = senderId; }
+    public String getSenderId() {
+        return senderId;
+    }
 
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(String recipientId) {
+        this.recipientId = recipientId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }
