@@ -1,9 +1,11 @@
 package it.unisalento.faro.domain;
 
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import java.util.ArrayList;
 
 @BsonDiscriminator(value = "worker")
+@MongoEntity(collection = "users")
 public class Worker extends User {
 
     private String currentAreaId;

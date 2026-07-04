@@ -7,8 +7,8 @@ import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 
 @BsonDiscriminator
-@MongoEntity(collection = "user")
-public abstract class User {
+@MongoEntity(collection = "users")
+public class User {
 
     @BsonId
     @BsonRepresentation(BsonType.OBJECT_ID)

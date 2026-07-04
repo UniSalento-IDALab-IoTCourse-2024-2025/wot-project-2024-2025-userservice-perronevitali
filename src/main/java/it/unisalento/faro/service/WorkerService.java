@@ -45,7 +45,6 @@ public class WorkerService {
     }
 
     public List<WorkerDTO> getAllWorkersByArea(String areaId) {
-        // uso Document BSON per evitare ambiguità con PanacheQL su MongoDB
         List<User> workers = userRepository.list(
                 new Document("_t", "worker").append("currentAreaId", areaId)
         );
@@ -123,8 +122,7 @@ public class WorkerService {
         return toWorkerDTO(worker);
     }
 
-    public WorkerDTO updateCurrentArea(String userId, String areaId,
-                                       String previousAreaId) throws Exception {
+    public WorkerDTO updateCurrentArea(String userId, String areaId, String previousAreaId) throws Exception {
         User user = userRepository.findById(userId);
         if (user == null || !(user instanceof Worker)) {
             throw new Exception("Worker non trovato");
@@ -134,13 +132,13 @@ public class WorkerService {
         worker.setCurrentAreaId(areaId);
         userRepository.update(worker);
 
-        // verifica autorizzazione — notifica worker se area non autorizzata
-        if (worker.getAuthorizedAreaIds() == null
-                || !worker.getAuthorizedAreaIds().contains(areaId)) {
+        // verifica autorizzazione e pubblica sul topic dell'area se non autorizzato
+        if (worker.getAuthorizedAreaIds() == null || !worker.getAuthorizedAreaIds().contains(areaId)) {
             try {
+                // tutti gli utenti connessi all'area vedono l'accesso non autorizzato
                 rabbitMQManager.publish(
-                        RabbitMQConstants.EXCHANGE_INBOX,
-                        worker.getId(),
+                        RabbitMQConstants.EXCHANGE_AREAS,
+                        "area." + areaId,
                         RabbitMQMessageTypes.AREA_UNAUTHORIZED,
                         new FaroMessage(
                                 RabbitMQMessageTypes.AREA_UNAUTHORIZED,
