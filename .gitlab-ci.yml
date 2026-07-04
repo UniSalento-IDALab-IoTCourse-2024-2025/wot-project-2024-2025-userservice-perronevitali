@@ -6,9 +6,9 @@ build:
   stage: build
   tags:
     - RaspberryPi
-  variables:
-    JAVA_HOME: /usr/lib/jvm/java-21-openjdk-arm64
   script:
+    - export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-arm64
+    - export PATH=$JAVA_HOME/bin:$PATH
     - ./gradlew quarkusBuild
   artifacts:
     paths:
