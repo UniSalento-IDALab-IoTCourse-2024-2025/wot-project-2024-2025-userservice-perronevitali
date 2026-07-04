@@ -56,4 +56,4 @@ volumes:
 
 networks:
   faro-net:
-    driver: "bridge"
+    external: true
