@@ -5,7 +5,7 @@ stages:
 build:
   stage: build
   tags:
-    - raspberry
+    - RaspberryPi
   script:
     - ./gradlew quarkusBuild
   artifacts:
