@@ -122,6 +122,7 @@ public class RabbitMQManager {
                                        Envelope envelope,
                                        AMQP.BasicProperties properties,
                                        byte[] body) throws IOException {
+                System.out.println(">>> MESSAGGIO RICEVUTO: type=" + properties.getType() + " body=" + new String(body));
                 try {
                     handler.handle(properties.getType(), body);
                     channel.basicAck(envelope.getDeliveryTag(), false);

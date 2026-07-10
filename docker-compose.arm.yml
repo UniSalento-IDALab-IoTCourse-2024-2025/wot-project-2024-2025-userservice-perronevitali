@@ -1,5 +1,4 @@
 services:
-
   RabbitMQFARO:
     image: rabbitmq:3.12-management
     platform: linux/arm64
@@ -25,6 +24,23 @@ services:
       - "27017:27017"
     volumes:
       - user-mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - faro-net
+
+  MongoExpressFARO:
+    image: mongo-express:1.0.0-alpha
+    platform: linux/arm64
+    container_name: MongoExpressFARO
+    ports:
+      - "8280:8280"      # UI — http://<ip-raspberry>:8081  (FARO / FARO)
+    environment:
+      ME_CONFIG_MONGODB_SERVER: UserMongoFARO
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: FARO
+      ME_CONFIG_BASICAUTH_PASSWORD: FARO
+    depends_on:
+      - UserMongoFARO
     restart: unless-stopped
     networks:
       - faro-net
