@@ -128,7 +128,7 @@ public class RabbitMQManager {
                     channel.basicAck(envelope.getDeliveryTag(), false);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    channel.basicNack(envelope.getDeliveryTag(), false, true);
+                    channel.basicNack(envelope.getDeliveryTag(), false, false);
                 }
             }
         };
