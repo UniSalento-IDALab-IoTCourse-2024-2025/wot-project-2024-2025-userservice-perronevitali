@@ -36,7 +36,7 @@ services:
     platform: linux/arm64
     container_name: MongoExpressFARO
     ports:
-      - "8280:8280"
+      - "8280:8081"
     environment:
       ME_CONFIG_MONGODB_SERVER: UserMongoFARO
       ME_CONFIG_MONGODB_PORT: 27017
