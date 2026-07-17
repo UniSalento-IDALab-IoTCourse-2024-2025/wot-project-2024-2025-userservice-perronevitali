@@ -92,8 +92,7 @@ public class UserService {
     public Optional<String> authenticate(LoginDTO loginDTO) {
         Optional<User> userOptional = userRepository.findByEmail(loginDTO.getEmail());
 
-        if (userOptional.isEmpty()
-                || !passwordEncoder.matches(loginDTO.getPassword(), userOptional.get().getPassword())) {
+        if (userOptional.isEmpty() || !passwordEncoder.matches(loginDTO.getPassword(), userOptional.get().getPassword())) {
             return Optional.empty();
         }
 

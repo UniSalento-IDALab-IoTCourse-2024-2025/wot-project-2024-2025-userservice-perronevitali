@@ -8,14 +8,8 @@ import io.quarkus.security.identity.request.TokenAuthenticationRequest;
 import io.quarkus.security.runtime.QuarkusPrincipal;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.smallrye.mutiny.Uni;
-import it.unisalento.faro.domain.Admin;
-import it.unisalento.faro.domain.User;
-import it.unisalento.faro.repositories.UserRepository;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
-import java.util.Optional;
 
 @ApplicationScoped
 public class JwtIdentityProvider implements IdentityProvider<TokenAuthenticationRequest> {
@@ -23,45 +17,56 @@ public class JwtIdentityProvider implements IdentityProvider<TokenAuthentication
     @Inject
     JwtUtilities jwtUtilities;
 
-    @Inject
-    UserRepository userRepository;
-
     @Override
     public Class<TokenAuthenticationRequest> getRequestType() {
         return TokenAuthenticationRequest.class;
     }
 
     @Override
-    public Uni<SecurityIdentity> authenticate(TokenAuthenticationRequest request, AuthenticationRequestContext context) {
+    public Uni<SecurityIdentity> authenticate(TokenAuthenticationRequest request,
+                                              AuthenticationRequestContext context) {
         String token = request.getToken().getToken();
-        String username = jwtUtilities.extractUsername(token);
-
+        String username;
+        try {
+            username = jwtUtilities.extractUsername(token);
+        } catch (Exception e) {
+            return Uni.createFrom().failure(
+                    new AuthenticationFailedException("Errore parsing JWT: " + e.getMessage())
+            );
+        }
         if (username == null || !jwtUtilities.validateToken(token, username)) {
             return Uni.createFrom().failure(
                     new AuthenticationFailedException("Token JWT non valido o scaduto")
             );
         }
-
         return context.runBlocking(() -> {
-            Optional<User> userOptional = userRepository.findByEmail(username);
-
-            if (userOptional.isEmpty()) {
-                throw new AuthenticationFailedException("Utente non trovato: " + username);
+            try {
+                String ruolo = jwtUtilities.extractClaim(token, claims ->
+                        claims.get("ruolo", String.class)
+                );
+                if (ruolo == null || ruolo.isEmpty()) {
+                    throw new AuthenticationFailedException(
+                            "Claim 'ruolo' mancante nel token JWT"
+                    );
+                }
+                String userId = jwtUtilities.extractClaim(token, claims ->
+                        claims.get("userId", String.class)
+                );
+                if (userId == null || userId.isEmpty()) {
+                    throw new AuthenticationFailedException(
+                            "Claim 'userId' mancante nel token JWT"
+                    );
+                }
+                return QuarkusSecurityIdentity.builder()
+                        .setPrincipal(new QuarkusPrincipal(username))
+                        .addRole(ruolo)
+                        .addAttribute("userId", userId)
+                        .build();
+            } catch (AuthenticationFailedException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new AuthenticationFailedException("Errore costruzione identity: " + e.getMessage());
             }
-
-            User user = userOptional.get();
-
-            String ruolo;
-            if (user instanceof Admin) {
-                ruolo = "ADMIN";
-            } else {
-                ruolo = "WORKER";
-            }
-
-            return QuarkusSecurityIdentity.builder()
-                    .setPrincipal(new QuarkusPrincipal(username))
-                    .addRole(ruolo)
-                    .build();
         });
     }
 }

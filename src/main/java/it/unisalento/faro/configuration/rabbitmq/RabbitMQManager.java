@@ -7,6 +7,7 @@ import io.quarkus.runtime.StartupEvent;
 import it.unisalento.faro.dto.messagesDTO.DirectMessage;
 import it.unisalento.faro.dto.messagesDTO.FaroMessage;
 import it.unisalento.faro.dto.messagesDTO.PositionUpdateMessage;
+import it.unisalento.faro.dto.otherDTO.AreaAuthorizationDTO;
 import it.unisalento.faro.service.WorkerService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -32,6 +33,7 @@ public class RabbitMQManager {
             Connection connection = rabbitMQClient.connect();
             channel = connection.createChannel();
             declareExchanges();
+            declareAuthorizationQueue();
         } catch (IOException e) {
             throw new RuntimeException("Errore init RabbitMQ", e);
         }
@@ -46,6 +48,33 @@ public class RabbitMQManager {
         channel.exchangeDeclare(RabbitMQConstants.EXCHANGE_AREA_UPDATES, "direct", true);
         // topic exchange per notifiche per area (area.{areaId})
         channel.exchangeDeclare(RabbitMQConstants.EXCHANGE_AREAS, "topic", true);
+    }
+
+    /**
+     * Dichiara e consuma la coda su cui OperationalService pubblica
+     * AUTHORIZE_AREA / REVOKE_AREA (routing key "authorization",
+     * stesso exchange EXCHANGE_AREA_UPDATES già usato per POSITION_UPDATE).
+     */
+    private void declareAuthorizationQueue() throws IOException {
+        channel.queueDeclare(RabbitMQConstants.QUEUE_AUTHORIZATION, true, false, false, null);
+        channel.queueBind(
+                RabbitMQConstants.QUEUE_AUTHORIZATION,
+                RabbitMQConstants.EXCHANGE_AREA_UPDATES,
+                RabbitMQConstants.ROUTING_KEY_AUTHORIZATION
+        );
+        channel.basicConsume(RabbitMQConstants.QUEUE_AUTHORIZATION, false,
+                buildConsumer((type, body) -> {
+                    AreaAuthorizationDTO dto = mapper.readValue(body, AreaAuthorizationDTO.class);
+                    switch (type) {
+                        case RabbitMQMessageTypes.AUTHORIZE_AREA ->
+                                workerService.addAuthorizedArea(dto.getWorkerId(), dto.getAreaId());
+                        case RabbitMQMessageTypes.REVOKE_AREA ->
+                                workerService.removeAuthorizedArea(dto.getWorkerId(), dto.getAreaId());
+                        default ->
+                                System.err.println("Tipo messaggio sconosciuto su QUEUE_AUTHORIZATION: " + type);
+                    }
+                })
+        );
     }
 
     public void declareUserQueue(String userId) throws IOException {

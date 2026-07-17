@@ -122,6 +122,13 @@ public class WorkerService {
         return toWorkerDTO(worker);
     }
 
+    /**
+     * Aggiorna l'area corrente del worker. Se l'area non è tra quelle
+     * autorizzate, pubblica un AREA_UNAUTHORIZED sul topic dell'area
+     * (visibile in tempo reale a tutti i client connessi) e propaga
+     * l'informazione a OperationalService tramite un unico POSITION_UPDATE
+     * arricchito con il flag "unauthorized".
+     */
     public WorkerDTO updateCurrentArea(String userId, String areaId, String previousAreaId) throws Exception {
         User user = userRepository.findById(userId);
         if (user == null || !(user instanceof Worker)) {
@@ -132,8 +139,10 @@ public class WorkerService {
         worker.setCurrentAreaId(areaId);
         userRepository.update(worker);
 
-        // verifica autorizzazione e pubblica sul topic dell'area se non autorizzato
-        if (worker.getAuthorizedAreaIds() == null || !worker.getAuthorizedAreaIds().contains(areaId)) {
+        boolean isUnauthorized = worker.getAuthorizedAreaIds() == null
+                || !worker.getAuthorizedAreaIds().contains(areaId);
+
+        if (isUnauthorized) {
             try {
                 // tutti gli utenti connessi all'area vedono l'accesso non autorizzato
                 rabbitMQManager.publish(
@@ -151,10 +160,11 @@ public class WorkerService {
             }
         }
 
-        // notifica OperationalService dell'aggiornamento posizione
+        // un'unica pubblicazione inter-servizio, con il flag già incluso:
+        // OperationalService aggiorna sia workerIdsInArea che unauthorizedWorkerIds
         try {
             PositionUpdateDTO positionUpdate = new PositionUpdateDTO(
-                    userId, areaId, previousAreaId
+                    userId, areaId, previousAreaId, isUnauthorized
             );
             rabbitMQManager.publish(
                     RabbitMQConstants.EXCHANGE_AREA_UPDATES,
@@ -202,6 +212,39 @@ public class WorkerService {
             return new ArrayList<>();
         }
         return worker.getAuthorizedAreaIds();
+    }
+
+    /**
+     * Aggiunge un'area alla lista delle aree autorizzate del worker.
+     * Chiamato da RabbitMQManager quando arriva un AUTHORIZE_AREA
+     * (pubblicato da OperationalService alla conferma di una task).
+     * Idempotente, no-op silenzioso se il worker non esiste più.
+     */
+    public void addAuthorizedArea(String workerId, String areaId) {
+        User user = userRepository.findById(workerId);
+        if (!(user instanceof Worker worker)) return;
+        if (worker.getAuthorizedAreaIds() == null) {
+            worker.setAuthorizedAreaIds(new ArrayList<>());
+        }
+        if (!worker.getAuthorizedAreaIds().contains(areaId)) {
+            worker.getAuthorizedAreaIds().add(areaId);
+            userRepository.update(worker);
+        }
+    }
+
+    /**
+     * Rimuove un'area dalla lista delle aree autorizzate del worker.
+     * Chiamato da RabbitMQManager quando arriva un REVOKE_AREA
+     * (pubblicato da OperationalService quando il worker completa/rifiuta
+     * la sua parte di una task e non ha altre task attive in quell'area).
+     * Idempotente, no-op silenzioso se il worker non esiste più.
+     */
+    public void removeAuthorizedArea(String workerId, String areaId) {
+        User user = userRepository.findById(workerId);
+        if (!(user instanceof Worker worker)) return;
+        if (worker.getAuthorizedAreaIds() != null && worker.getAuthorizedAreaIds().remove(areaId)) {
+            userRepository.update(worker);
+        }
     }
 
     public WorkerDTO toWorkerDTO(User user) {
