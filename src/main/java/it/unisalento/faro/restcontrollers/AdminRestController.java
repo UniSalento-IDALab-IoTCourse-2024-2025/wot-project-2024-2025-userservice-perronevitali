@@ -18,6 +18,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+// NUOVO: tutti gli endpoint di questo controller richiedono ruolo ADMIN.
+// Prima del refactoring, nessun controller applicava enforcement di ruolo
+// reale (solo "autenticato si/no" da application.properties) - vedi
+// FARO_refactoring_design.md, Fase 1.
 @RestController
 @RequestMapping("/api/admins")
 @RolesAllowed("ADMIN")
@@ -156,7 +160,7 @@ public class AdminRestController {
         AdminResponseDTO responseDTO = new AdminResponseDTO();
 
         try {
-            AdminDTO updated = adminService.assignArea(id, areaId);
+            AdminDTO updated = adminService.assignArea(id, normalizeJsonStringBody(areaId));
 
             List<AdminDTO> list = new ArrayList<>();
             list.add(updated);
@@ -198,5 +202,19 @@ public class AdminRestController {
         }
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    private String normalizeJsonStringBody(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String trimmed = raw.trim();
+        if (trimmed.isEmpty() || trimmed.equalsIgnoreCase("null")) {
+            return null;
+        }
+        if (trimmed.length() >= 2 && trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
+            return trimmed.substring(1, trimmed.length() - 1);
+        }
+        return trimmed;
     }
 }
