@@ -17,4 +17,9 @@ public class UserRepository implements PanacheMongoRepositoryBase<User, String> 
     public Optional<User> findByEmail(String email) {
         return find("email", email).firstResultOptional();
     }
+
+    @Override
+    public boolean deleteById(String id) {
+        return delete("_id", new ObjectId(id)) > 0;
+    }
 }
