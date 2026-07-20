@@ -18,10 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-// NUOVO: tutti gli endpoint di questo controller richiedono ruolo ADMIN.
-// Prima del refactoring, nessun controller applicava enforcement di ruolo
-// reale (solo "autenticato si/no" da application.properties) - vedi
-// FARO_refactoring_design.md, Fase 1.
 @RestController
 @RequestMapping("/api/admins")
 @RolesAllowed("ADMIN")

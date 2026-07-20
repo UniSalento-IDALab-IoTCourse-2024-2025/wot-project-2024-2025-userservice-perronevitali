@@ -22,7 +22,6 @@ public class WorkerRestController {
     @Autowired
     WorkerService workerService;
 
-    // NUOVO - elenco completo dei worker: solo ADMIN (gestione)
     @RolesAllowed("ADMIN")
     @RequestMapping(value = "/",
             method = RequestMethod.GET,
@@ -39,10 +38,6 @@ public class WorkerRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // NUOVO - dettaglio worker: ADMIN o il worker stesso (coerente con
-    // FARO_REST_Endpoints.md, "Auth: ADMIN, WORKER". NOTA: non c'e' ancora
-    // un controllo che l'id richiesto coincida col chiamante se WORKER -
-    // segnalato come miglioramento futuro, non bloccante per la Fase 1)
     @RolesAllowed({"ADMIN", "WORKER"})
     @RequestMapping(value = "/{id}",
             method = RequestMethod.GET,
@@ -126,7 +121,6 @@ public class WorkerRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // NUOVO - assegnazione aree autorizzate: solo ADMIN
     @RolesAllowed("ADMIN")
     @RequestMapping(value = "/{id}/areas",
             method = RequestMethod.PUT,
@@ -155,7 +149,6 @@ public class WorkerRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // NUOVO - eliminazione worker: solo ADMIN
     @RolesAllowed("ADMIN")
     @RequestMapping(value = "/{id}",
             method = RequestMethod.DELETE)
@@ -182,22 +175,4 @@ public class WorkerRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @RolesAllowed({"ADMIN", "WORKER"})
-    @RequestMapping(value = "/{id}/areas/authorized",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAuthorizedAreas(@PathVariable String id) {
-        WorkerResponseDTO responseDTO = new WorkerResponseDTO();
-
-        try {
-            List<String> areaIds = workerService.getAuthorizedAreaIds(id);
-            responseDTO.setResult(WorkerResponseDTO.OK);
-            responseDTO.setMessage(String.join(",", areaIds));
-        } catch (Exception e) {
-            responseDTO.setResult(WorkerResponseDTO.WORKER_NOT_FOUND);
-            responseDTO.setMessage("Worker non trovato");
-        }
-
-        return ResponseEntity.ok(responseDTO);
-    }
 }

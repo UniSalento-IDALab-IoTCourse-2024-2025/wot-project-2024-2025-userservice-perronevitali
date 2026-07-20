@@ -18,18 +18,43 @@ public class AreaAlertMessage {
         this.currentHumidity = currentHumidity;
     }
 
-    public String getAreaId() { return areaId; }
-    public void setAreaId(String areaId) { this.areaId = areaId; }
+    public String getAreaId() {
+        return areaId;
+    }
 
-    public String getAreaName() { return areaName; }
-    public void setAreaName(String areaName) { this.areaName = areaName; }
+    public void setAreaId(String areaId) {
+        this.areaId = areaId;
+    }
 
-    public int getStatus() { return status; }
-    public void setStatus(int status) { this.status = status; }
+    public String getAreaName() {
+        return areaName;
+    }
 
-    public double getCurrentTemperature() { return currentTemperature; }
-    public void setCurrentTemperature(double currentTemperature) { this.currentTemperature = currentTemperature; }
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
 
-    public double getCurrentHumidity() { return currentHumidity; }
-    public void setCurrentHumidity(double currentHumidity) { this.currentHumidity = currentHumidity; }
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public double getCurrentTemperature() {
+        return currentTemperature;
+    }
+
+    public void setCurrentTemperature(double currentTemperature) {
+        this.currentTemperature = currentTemperature;
+    }
+
+    public double getCurrentHumidity() {
+        return currentHumidity;
+    }
+
+    public void setCurrentHumidity(double currentHumidity) {
+        this.currentHumidity = currentHumidity;
+    }
 }

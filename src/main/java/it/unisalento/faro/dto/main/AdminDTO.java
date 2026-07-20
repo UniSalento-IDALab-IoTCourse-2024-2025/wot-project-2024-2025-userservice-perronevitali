@@ -6,6 +6,7 @@ public class AdminDTO extends UserDTO {
     public String getManagedAreaId() {
         return managedAreaId;
     }
+
     public void setManagedAreaId(String managedAreaId) {
         this.managedAreaId = managedAreaId;
     }

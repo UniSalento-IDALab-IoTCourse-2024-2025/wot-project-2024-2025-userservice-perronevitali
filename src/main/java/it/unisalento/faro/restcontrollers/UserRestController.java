@@ -24,10 +24,6 @@ public class UserRestController {
     @Autowired
     UserService userService;
 
-    // NUOVO - elenco di tutti gli utenti (admin + worker misti): solo ADMIN.
-    // E' anche l'endpoint che finora restituiva UserDTO senza campo "role" -
-    // ora lo restituisce, risolvendo il problema del frontend che non poteva
-    // distinguere admin da worker in questa lista.
     @RolesAllowed("ADMIN")
     @RequestMapping(value = "/",
             method = RequestMethod.GET,
@@ -162,7 +158,6 @@ public class UserRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // NUOVO - eliminazione: solo ADMIN
     @RolesAllowed("ADMIN")
     @RequestMapping(value = "/{id}",
             method = RequestMethod.DELETE)
